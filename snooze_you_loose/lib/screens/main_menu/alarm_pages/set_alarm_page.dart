@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:snooze_you_loose/models/alarm_model.dart';
-import 'package:snooze_you_loose/screens/main_menu/alarm_pages/alarm_home_page.dart';
 import 'package:snooze_you_loose/screens/main_menu/bottom_nav_bar.dart';
 import 'package:snooze_you_loose/services/alarm_services.dart';
 import 'package:snooze_you_loose/services/notification_services.dart';
@@ -373,10 +372,7 @@ class _SetAlarmOverlayState extends State<SetAlarmOverlay>
                                     DateTime.parse(_time));
                               }
 
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => BottomNavBar()));
+                              Navigator.pop(context);
                             },
                             child: Text('OK'))
                       ],

@@ -66,7 +66,6 @@ class AlarmHomePageState extends State<AlarmHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    double maxWidth = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -177,8 +176,8 @@ class AlarmHomePageState extends State<AlarmHomePage> {
                   }),
               TextButton(
                   onPressed: () {
-                    _ns.scheduleAlarm(0, 'singing_birds',
-                        DateTime.now().add(Duration(seconds: 10)));
+                    _ns.scheduleAlarm(0, 'ocean_waves',
+                        DateTime.now().add(Duration(seconds: 5)));
                   },
                   child: Text('Show FUllscreen not'))
             ],

@@ -11,7 +11,6 @@ final String colRepeat = 'alarmRepeat';
 
 class AlarmServices {
   static Database _db;
-  static AlarmServices _alarmServices;
 
   Future<Database> get database async {
     if (_db == null) _db = await initializeDatabase();
