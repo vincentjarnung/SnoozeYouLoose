@@ -3,12 +3,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:snooze_you_loose/models/alarm_model.dart';
 import 'package:snooze_you_loose/screens/main_menu/alarm_pages/set_alarm_page.dart';
 import 'package:snooze_you_loose/services/alarm_services.dart';
-import 'package:timezone/browser.dart' as tz;
+import 'package:snooze_you_loose/services/notification_services.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 class AlarmHomePage extends StatefulWidget {
+  static const String routeName = '/';
   @override
   AlarmHomePageState createState() => AlarmHomePageState();
 }
@@ -16,7 +17,7 @@ class AlarmHomePage extends StatefulWidget {
 class AlarmHomePageState extends State<AlarmHomePage> {
   Future<List<AlarmModel>> _alarms;
   AlarmServices _alarmServices = AlarmServices();
-  String path = 'sounds/singingBirds.mp3';
+  NotificationServices _ns = NotificationServices();
 
   @override
   void initState() {
@@ -154,7 +155,11 @@ class AlarmHomePageState extends State<AlarmHomePage> {
                                         onChanged: (newVal) {
                                           setState(() {
                                             if (newVal) {
-                                              _scheduleAlarm();
+                                              _ns.scheduleAlarm(
+                                                  alarm.id,
+                                                  alarm.alarmSound,
+                                                  DateTime.now().add(
+                                                      Duration(seconds: 10)));
                                               alarm.isEnabled = 1;
                                             } else {
                                               alarm.isEnabled = 0;
@@ -170,6 +175,12 @@ class AlarmHomePageState extends State<AlarmHomePage> {
                       }).toList(),
                     );
                   }),
+              TextButton(
+                  onPressed: () {
+                    _ns.scheduleAlarm(0, 'singing_birds',
+                        DateTime.now().add(Duration(seconds: 10)));
+                  },
+                  child: Text('Show FUllscreen not'))
             ],
           ),
         ),
@@ -188,37 +199,30 @@ class AlarmHomePageState extends State<AlarmHomePage> {
     );
   }
 
-  void _scheduleAlarm() async {
-    print('ggggo');
-
-    DateTime scheduledNotificationDayTime =
-        DateTime.now().add(Duration(seconds: 10));
-
-    tz.TZDateTime time = tz.TZDateTime.from(
-        scheduledNotificationDayTime, tz.getLocation('Stockholm/Sweden'));
-
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'alarm_notif',
-      'alarm_notif',
-      'Channel for Alarm notification',
-      icon: 'codex_logo',
-      sound: RawResourceAndroidNotificationSound('a_long_cold_sting'),
-      largeIcon: DrawableResourceAndroidBitmap('codex_logo'),
+  Future<void> _showFullScreenNotification() async {
+    await showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Turn off your screen'),
+        content: const Text(
+            'to see the full-screen intent in 5 seconds, press OK and TURN '
+            'OFF your screen'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              _ns.showFullScreenNot();
+              Navigator.pop(context);
+            },
+            child: const Text('OK'),
+          )
+        ],
+      ),
     );
-
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
-        sound: 'a_long_cold_sting.wav',
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true);
-    var platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics);
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0, 'Office', 'Title', time, platformChannelSpecifics,
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
   }
 }

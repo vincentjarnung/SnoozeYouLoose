@@ -6,6 +6,7 @@ import 'package:snooze_you_loose/models/alarm_model.dart';
 import 'package:snooze_you_loose/screens/main_menu/alarm_pages/alarm_home_page.dart';
 import 'package:snooze_you_loose/screens/main_menu/bottom_nav_bar.dart';
 import 'package:snooze_you_loose/services/alarm_services.dart';
+import 'package:snooze_you_loose/services/notification_services.dart';
 import 'package:snooze_you_loose/shared/day_button.dart';
 import 'package:snooze_you_loose/shared/shared_colors.dart';
 
@@ -28,11 +29,13 @@ class _SetAlarmOverlayState extends State<SetAlarmOverlay>
   AlarmServices _alarmServices = AlarmServices();
   final String _today = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
+  NotificationServices _ns = NotificationServices();
+
   AudioPlayer audioPlayer = AudioPlayer();
   AudioCache _audioCache;
   List<Map<String, String>> _sounds = [
-    {"path": 'sounds/singingBirds.wav', "name": 'Singing Birds'},
-    {"path": 'sounds/oceanWaves.wav', "name": 'Ocean Waves'}
+    {"path": 'singing_birds', "name": 'Singing Birds'},
+    {"path": 'ocean_waves', "name": 'Ocean Waves'}
   ];
 
   String _time;
@@ -311,8 +314,9 @@ class _SetAlarmOverlayState extends State<SetAlarmOverlay>
                                       size: 40,
                                       color: SharedColors.kPrimaryColor,
                                     );
-                                    _audioCache.loop(
-                                        _sounds[_soundVal].values.elementAt(0));
+                                    _audioCache.loop('sounds/' +
+                                        _sounds[_soundVal].values.elementAt(0) +
+                                        '.wav');
                                     audioPlayer.setVolume(_sliderVal);
                                   }
                                 });
@@ -350,6 +354,10 @@ class _SetAlarmOverlayState extends State<SetAlarmOverlay>
                                         _sounds[_soundVal].values.elementAt(0),
                                     volume: _sliderVal);
                                 _alarmServices.update(alarmModel);
+                                _ns.scheduleAlarm(
+                                    widget.id,
+                                    _sounds[_soundVal].values.elementAt(0),
+                                    DateTime.parse(_time));
                               } else {
                                 var alarmModel = AlarmModel(
                                     time: _time,
@@ -359,6 +367,10 @@ class _SetAlarmOverlayState extends State<SetAlarmOverlay>
                                         _sounds[_soundVal].values.elementAt(0),
                                     volume: _sliderVal);
                                 _alarmServices.insertAlarm(alarmModel);
+                                _ns.scheduleAlarm(
+                                    widget.id,
+                                    _sounds[_soundVal].values.elementAt(0),
+                                    DateTime.parse(_time));
                               }
 
                               Navigator.pushReplacement(
