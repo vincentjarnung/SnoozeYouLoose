@@ -354,9 +354,7 @@ class _SetAlarmOverlayState extends State<SetAlarmOverlay>
                                     volume: _sliderVal);
                                 _alarmServices.update(alarmModel);
                                 _ns.scheduleAlarm(
-                                    widget.id,
-                                    _sounds[_soundVal].values.elementAt(0),
-                                    DateTime.parse(_time));
+                                    widget.id, DateTime.parse(_time));
                               } else {
                                 var alarmModel = AlarmModel(
                                     time: _time,
@@ -367,9 +365,7 @@ class _SetAlarmOverlayState extends State<SetAlarmOverlay>
                                     volume: _sliderVal);
                                 _alarmServices.insertAlarm(alarmModel);
                                 _ns.scheduleAlarm(
-                                    widget.id,
-                                    _sounds[_soundVal].values.elementAt(0),
-                                    DateTime.parse(_time));
+                                    widget.id, DateTime.parse(_time));
                               }
 
                               Navigator.pop(context);

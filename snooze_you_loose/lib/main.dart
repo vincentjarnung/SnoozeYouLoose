@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:snooze_you_loose/screens/main_menu/bottom_nav_bar.dart';
 import 'package:snooze_you_loose/services/notification_services.dart';
 import 'package:rxdart/subjects.dart';
@@ -34,6 +34,7 @@ class ReceivedNotification {
 
 String initialRoute;
 String selectedNotificationPayload;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var initializationSettingsAndroid =
@@ -84,23 +85,7 @@ Future<void> main() async {
   );
 }
 
-/*class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Snooze You Loose',
-      theme: ThemeData(
-        primarySwatch: SharedColors.kPrimaryColor,
-        primaryColor: SharedColors.kPrimaryColor,
-      ),
-      //initialRoute: initalRoute,
-      home: BottomNavBar(),
-    );
-  }
-}*/
-
-class WakeUp extends StatelessWidget {
+class WakeUp extends StatefulWidget {
   const WakeUp(
     this.payload, {
     Key key,
@@ -111,29 +96,70 @@ class WakeUp extends StatelessWidget {
   final String payload;
 
   @override
+  _WakeUpState createState() => _WakeUpState();
+}
+
+class _WakeUpState extends State<WakeUp> {
+  void initState() {
+    super.initState();
+    FlutterRingtonePlayer.play(
+        looping: true,
+        asAlarm: true,
+        volume: 0.3,
+        android: AndroidSound(3),
+        ios: IosSound(1009));
+  }
+
+  @override
   Widget build(BuildContext context) {
     final NotificationServices _ns = NotificationServices();
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.yellow,
       body: Center(
-        child: Container(
-          height: 90,
-          width: 90,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: SharedColors.kSecoundaryColor,
-          ),
-          child: TextButton(
-              onPressed: () {
-                _ns.cancelAlarm();
-                exit(0);
-              },
-              child: Text('Awake',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ))),
+        child: Column(
+          children: [
+            Container(
+              height: 90,
+              width: 90,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: SharedColors.kPrimaryColor,
+              ),
+              child: TextButton(
+                  onPressed: () {
+                    _ns.cancelAlarm();
+                    _ns.snoozeAlarm(0);
+                    FlutterRingtonePlayer.stop();
+                    Navigator.pop(context);
+                  },
+                  child: Text('Snooze',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ))),
+            ),
+            Container(
+              height: 90,
+              width: 90,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: SharedColors.kSecoundaryColor,
+              ),
+              child: TextButton(
+                  onPressed: () {
+                    _ns.cancelAlarm();
+                    FlutterRingtonePlayer.stop();
+                    Navigator.pop(context);
+                  },
+                  child: Text('Awake',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ))),
+            ),
+          ],
         ),
       ),
     );

@@ -156,7 +156,6 @@ class AlarmHomePageState extends State<AlarmHomePage> {
                                             if (newVal) {
                                               _ns.scheduleAlarm(
                                                   alarm.id,
-                                                  alarm.alarmSound,
                                                   DateTime.now().add(
                                                       Duration(seconds: 10)));
                                               alarm.isEnabled = 1;
@@ -176,8 +175,8 @@ class AlarmHomePageState extends State<AlarmHomePage> {
                   }),
               TextButton(
                   onPressed: () {
-                    _ns.scheduleAlarm(0, 'ocean_waves',
-                        DateTime.now().add(Duration(seconds: 5)));
+                    _ns.scheduleAlarm(
+                        0, DateTime.now().add(Duration(seconds: 5)));
                   },
                   child: Text('Show FUllscreen not'))
             ],
